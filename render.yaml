@@ -1,0 +1,17 @@
+services:
+  - type: worker
+    name: ducks-telegram-bot
+    runtime: docker
+    envVars:
+      - key: BOT_TOKEN
+        sync: false
+      - key: ADMIN_IDS
+        sync: false
+      - key: ADMIN_CHAT_ID
+        sync: false
+      - key: DATABASE_PATH
+        value: /app/data/ducks_bot.sqlite3
+      - key: TIMEZONE
+        value: Asia/Almaty
+      - key: LOG_LEVEL
+        value: INFO
