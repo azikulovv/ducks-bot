@@ -1,52 +1,55 @@
-# DUCK'S Telegram Bot
+# DUCK'S GameClub Telegram Bot
 
-Production-ready Telegram-бот игрового клуба DUCK'S на Python 3.11+, `python-telegram-bot` и SQLite.
+Telegram-бот для пользователей DUCK'S GameClub на Python 3.11+, `aiogram 3` и REST API backend.
+
+Бот не обращается к базе данных напрямую. Все клубные данные берутся только через `API_BASE_URL`.
 
 ## Возможности
 
-- `/events` — будущие мероприятия с фильтром по покеру, дартсу и бильярду.
-- Запись на событие через inline-кнопку с защитой от повторной записи.
-- Автоматическая регистрация пользователей при первом контакте.
-- `/ratingpoker`, `/ratingdart`, `/ratingbill` — рейтинги по участию.
-- `/rules`, `/support`, `/feedback`.
-- Админ-команды через whitelist `ADMIN_IDS`.
-- Напоминания участникам примерно за 24 часа до события.
+- `/start` — главное меню.
+- `/help` — список команд.
+- `/events` — ближайшие опубликованные мероприятия.
+- `/poker`, `/darts`, `/billiards` — фильтр мероприятий по игре.
+- Запись на мероприятие через inline-кнопку `Записаться`.
+- `/rating` — рейтинг игроков по игре.
+- `/rules` — правила клуба.
+- `/feedback` — отправка сообщения клубу.
+- `/link <backend_user_id>` — локальная привязка Telegram user к backend user id.
 
-## Админ-команды
+## Переменные окружения
 
-- `/admin_add_event` — пошаговое создание мероприятия.
-- `/admin_events` — список активных будущих мероприятий с ID.
-- `/admin_delete_event <event_id>` — мягкое удаление мероприятия.
-- `/admin_registrations <event_id>` — список записавшихся пользователей.
+Скопируйте пример и заполните токен:
 
-## Локальный запуск Linux/macOS
+```bash
+cp .env.example .env
+```
+
+```env
+TELEGRAM_BOT_TOKEN=your_telegram_bot_token
+API_BASE_URL=http://localhost:4000/api
+API_TIMEOUT_SECONDS=10
+LOG_LEVEL=INFO
+USER_LINKS_PATH=data/user_links.json
+```
+
+`/link` хранит связь `telegram_user_id -> backend_user_id` в локальном JSON-файле. Для production не доверяйте произвольному `backend_user_id`: лучше добавить backend endpoint или одноразовый код подтверждения.
+
+## Локальный запуск
 
 ```bash
 python3.11 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-cp .env.example .env
+PYTHONPATH=src python -m main
 ```
 
-Заполните `.env`: `BOT_TOKEN`, `ADMIN_IDS`, при необходимости `ADMIN_CHAT_ID`.
+Backend должен быть доступен по `API_BASE_URL`, например `http://localhost:4000/api`.
+
+## Тесты
 
 ```bash
-python bot.py
-```
-
-## Локальный запуск Windows PowerShell
-
-```powershell
-py -3.11 -m venv .venv
-.\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-Copy-Item .env.example .env
-```
-
-Заполните `.env`, затем:
-
-```powershell
-python bot.py
+pip install -e ".[dev]"
+pytest
 ```
 
 ## Docker
@@ -56,34 +59,32 @@ docker build -t ducks-telegram-bot .
 docker run --env-file .env -v ducks_bot_data:/app/data ducks-telegram-bot
 ```
 
-## Render
+## Архитектура
 
-1. Создайте новый `Worker` из репозитория.
-2. Выберите Docker runtime или используйте `render.yaml`.
-3. Добавьте переменные окружения из `.env.example`.
-4. Для SQLite подключите persistent disk и выставьте `DATABASE_PATH` в путь на диске, например `/var/data/ducks_bot.sqlite3`.
-5. Запустите deploy. Бот работает в polling mode, web service не нужен.
-
-## Railway
-
-1. Создайте проект из GitHub-репозитория.
-2. Добавьте переменные окружения из `.env.example`.
-3. Укажите start command: `python bot.py`.
-4. Подключите volume и задайте `DATABASE_PATH` на путь volume, чтобы SQLite не терялась при рестартах.
-
-## Heroku
-
-1. Добавьте `Procfile`.
-2. Создайте приложение и задайте config vars:
-
-```bash
-heroku config:set BOT_TOKEN=... ADMIN_IDS=... ADMIN_CHAT_ID=...
+```text
+src/
+  main.py
+  config/settings.py
+  bot/
+    callbacks.py
+    factory.py
+    formatters.py
+    keyboards.py
+  api/
+    client.py
+    errors.py
+    models.py
+  handlers/
+    start.py
+    events.py
+    ratings.py
+    rules.py
+    feedback.py
+    linking.py
+  state/feedback.py
+  storage/user_links.py
+  logging_config/setup.py
+tests/
 ```
 
-3. Включите worker:
-
-```bash
-heroku ps:scale worker=1
-```
-
-SQLite на Heroku ephemeral filesystem не подходит для долгого production-хранения. Для Heroku используйте внешний volume-совместимый хостинг или перенесите БД на managed SQL.
+HTTP-запросы идут через `ApiClient` на `httpx.AsyncClient` с timeout. Безопасные `GET`-запросы ретраятся, `POST`-запросы не ретраятся. Ошибки backend формата `{ "error": { "code": "...", "message": "...", "details": {} } }` логируются, пользователю показываются короткие сообщения.
