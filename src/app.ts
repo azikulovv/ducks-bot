@@ -1,12 +1,8 @@
-import { Bot } from 'grammy'
-import dotenv from 'dotenv'
+import { bot } from './bot'
 
-dotenv.config()
+async function bootstrap() {
+  await bot.start()
+  console.log('🦆 DUCK’S bot started')
+}
 
-const bot = new Bot(process.env.TELEGRAM_BOT_TOKEN!)
-
-bot.command('start', async (ctx) => {
-  await ctx.reply('🦆 DUCK’S Bot работает')
-})
-
-bot.start()
+bootstrap()

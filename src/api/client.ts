@@ -1,8 +1,9 @@
 import axios from 'axios'
+import { env } from '../config/env'
 
 export const api = axios.create({
-  baseURL: process.env.API_URL,
+  baseURL: env.API_URL,
   headers: {
-    Authorization: `Bearer ${process.env.API_TOKEN}`,
+    Authorization: `Bearer ${env.API_TOKEN}`,
   },
 })
