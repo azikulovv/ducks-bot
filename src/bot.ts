@@ -19,3 +19,7 @@ registerEventsHandler(bot)
 registerRatingsHandler(bot)
 registerRulesHandler(bot)
 registerSupportHandler(bot)
+
+bot.catch((error) => {
+  console.error('GLOBAL_BOT_ERROR:', error)
+})

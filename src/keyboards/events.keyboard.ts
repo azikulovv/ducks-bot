@@ -21,17 +21,44 @@ export function eventNavigationKeyboard(
 ) {
   const keyboard = new InlineKeyboard()
 
-  keyboard
-    .text('◀️', createCallback('events', 'page', String(page - 1), game))
-    .text(`${page + 1}/${total}`, 'noop')
-    .text('▶️', createCallback('events', 'page', String(page + 1), game))
-    .row()
+  /**
+   * Dynamic buttons
+   */
+  const isFirstPage = page === 0
 
+  const isLastPage = page === total - 1
+
+  /**
+   * PREV
+   */
+  keyboard.text(
+    isFirstPage ? '⏺' : '◀️',
+    isFirstPage ? 'noop' : createCallback('events', 'page', String(page - 1), game),
+  )
+
+  /**
+   * PAGE INFO
+   */
+  keyboard.text(`${page + 1}/${total}`, 'noop')
+
+  /**
+   * NEXT
+   */
+  keyboard.text(
+    isLastPage ? '⏺' : '▶️',
+    isLastPage ? 'noop' : createCallback('events', 'page', String(page + 1), game),
+  )
+
+  keyboard.row()
+
+  /**
+   * REGISTER BUTTON
+   */
   if (registered) {
     keyboard.text('❌ Отписаться', createCallback('events', 'unregister', String(eventId)))
   } else {
     keyboard.text('✅ Записаться', createCallback('events', 'register', String(eventId)))
   }
 
-  return keyboard.text('◀️ Назад', createCallback('events', 'filter', game)).row()
+  return keyboard
 }

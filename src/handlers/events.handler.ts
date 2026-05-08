@@ -1,5 +1,6 @@
 import { Bot } from 'grammy'
 import { BotContext } from '../types/context'
+
 import { gamesKeyboard, eventNavigationKeyboard } from '../keyboards/events.keyboard'
 
 import { getEvents, registerToEvent, unregisterFromEvent } from '../api/events.api'
@@ -14,58 +15,150 @@ export function registerEventsHandler(bot: Bot<BotContext>) {
     })
   })
 
+  bot.callbackQuery('noop', async (ctx) => {
+    await ctx.answerCallbackQuery()
+  })
+
   bot.callbackQuery(/^events:/, async (ctx) => {
-    const data = parseCallback(ctx.callbackQuery.data)
+    try {
+      const callbackData = ctx.callbackQuery.data
 
-    const action = data[1]
+      console.log('CALLBACK:', callbackData)
 
-    if (action === 'filter') {
-      const game = data[2]
+      const data = parseCallback(callbackData)
 
-      const events = await getEvents(game === 'all' ? undefined : game)
+      console.log('PARSED:', data)
 
-      if (!events.length) {
-        return ctx.answerCallbackQuery({
-          text: 'События не найдены',
+      const action = data[1]
+
+      /**
+       * FILTER EVENTS
+       *
+       * events:filter:poker
+       */
+      if (action === 'filter') {
+        const game = data[2]
+
+        const events = await getEvents(game === 'all' ? undefined : game)
+
+        if (!events.length) {
+          return ctx.answerCallbackQuery({
+            text: 'События не найдены',
+          })
+        }
+
+        const page = 0
+
+        const event = events[page]
+
+        await ctx.editMessageText(formatEvent(event), {
+          reply_markup: eventNavigationKeyboard(event.id, page, events.length, true, game),
+        })
+
+        await ctx.answerCallbackQuery()
+      }
+
+      /**
+       * PAGINATION
+       *
+       * events:page:1:poker
+       */
+      if (action === 'page') {
+        const requestedPage = Number(data[2])
+
+        const game = data[3]
+
+        const events = await getEvents(game === 'all' ? undefined : game)
+
+        if (!events.length) {
+          return ctx.answerCallbackQuery({
+            text: 'События не найдены',
+          })
+        }
+
+        /**
+         * Normalize page
+         */
+        const normalizedPage = Math.max(0, Math.min(requestedPage, events.length - 1))
+
+        /**
+         * Current page from message
+         */
+        const currentPageText =
+          ctx.callbackQuery.message?.reply_markup?.inline_keyboard?.[0]?.[1]?.text
+
+        const currentPage = currentPageText ? Number(currentPageText.split('/')[0]) - 1 : 0
+
+        /**
+         * Prevent identical update
+         */
+        if (currentPage === normalizedPage) {
+          return ctx.answerCallbackQuery({
+            text: normalizedPage === 0 ? 'Это первая страница' : 'Это последняя страница',
+          })
+        }
+
+        const event = events[normalizedPage]
+
+        await ctx.editMessageText(formatEvent(event), {
+          reply_markup: eventNavigationKeyboard(
+            event.id,
+            normalizedPage,
+            events.length,
+            true,
+            game,
+          ),
+        })
+
+        await ctx.answerCallbackQuery()
+      }
+
+      /**
+       * REGISTER
+       *
+       * events:register:15
+       */
+      if (action === 'register') {
+        if (!ctx.user) {
+          return ctx.answerCallbackQuery({
+            text: 'Нужно привязать аккаунт',
+          })
+        }
+
+        const eventId = Number(data[2])
+
+        await registerToEvent(eventId, ctx.user.id)
+
+        await ctx.answerCallbackQuery({
+          text: '✅ Вы записаны',
         })
       }
 
-      const event = events[0]
+      /**
+       * UNREGISTER
+       *
+       * events:unregister:15
+       */
+      if (action === 'unregister') {
+        if (!ctx.user) {
+          return ctx.answerCallbackQuery({
+            text: 'Нужно привязать аккаунт',
+          })
+        }
 
-      await ctx.editMessageText(formatEvent(event), {
-        reply_markup: eventNavigationKeyboard(event.id, 0, events.length, false, game),
-      })
-    }
+        const eventId = Number(data[2])
 
-    if (action === 'register') {
-      if (!ctx.user) {
-        return ctx.answerCallbackQuery({
-          text: 'Нужно привязать аккаунт',
+        await unregisterFromEvent(eventId, ctx.user.id)
+
+        await ctx.answerCallbackQuery({
+          text: '❌ Вы отписались',
         })
       }
-
-      const eventId = Number(data[2])
-
-      await registerToEvent(eventId, ctx.user.id)
+    } catch (error) {
+      console.error('EVENTS_HANDLER_ERROR:', error)
 
       await ctx.answerCallbackQuery({
-        text: 'Вы записаны',
-      })
-    }
-
-    if (action === 'unregister') {
-      if (!ctx.user) {
-        return ctx.answerCallbackQuery({
-          text: 'Нужно привязать аккаунт',
-        })
-      }
-
-      const eventId = Number(data[2])
-
-      await unregisterFromEvent(eventId, ctx.user.id)
-
-      await ctx.answerCallbackQuery({
-        text: 'Вы отписались',
+        text: 'Произошла ошибка',
       })
     }
   })
