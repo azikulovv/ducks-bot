@@ -1,17 +1,27 @@
-import { MiddlewareFn } from 'grammy'
+import { Bot } from 'grammy'
 import { BotContext } from '../types/context'
-import { getUserByTelegramId } from '../api/users.api'
+import { getUserByTelegramId, createUser } from '../api/users.api'
 
-export const authMiddleware: MiddlewareFn<BotContext> = async (ctx, next) => {
-  const telegramId = ctx.from?.id
+export function authMiddleware(bot: Bot<BotContext>) {
+  bot.use(async (ctx, next) => {
+    const telegramId = ctx.from?.id
 
-  if (!telegramId) {
+    if (!telegramId) {
+      return next()
+    }
+
+    let user = await getUserByTelegramId(telegramId)
+
+    if (!user) {
+      user = await createUser({
+        telegram_id: telegramId.toString(),
+        name: ctx.from?.first_name || null,
+      })
+    }
+
+    ctx.user = user
+
+    console.log(user)
     return next()
-  }
-
-  const user = await getUserByTelegramId(telegramId)
-
-  ctx.user = user
-
-  await next()
+  })
 }

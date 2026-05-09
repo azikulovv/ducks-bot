@@ -52,7 +52,7 @@ export function registerEventsHandler(bot: Bot<BotContext>) {
         const event = events[page]
 
         await ctx.editMessageText(formatEvent(event), {
-          reply_markup: eventNavigationKeyboard(event.id, page, events.length, true, game),
+          reply_markup: eventNavigationKeyboard(event.id, page, events.length, false, game),
         })
 
         await ctx.answerCallbackQuery()
@@ -105,7 +105,7 @@ export function registerEventsHandler(bot: Bot<BotContext>) {
             event.id,
             normalizedPage,
             events.length,
-            true,
+            false,
             game,
           ),
         })
@@ -125,7 +125,7 @@ export function registerEventsHandler(bot: Bot<BotContext>) {
           })
         }
 
-        const eventId = Number(data[2])
+        const eventId = data[2]
 
         await registerToEvent(eventId, ctx.user.id)
 

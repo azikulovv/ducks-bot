@@ -30,7 +30,7 @@ export async function getEvents(game?: string): Promise<Event[]> {
   return response.data.data
 }
 
-export async function registerToEvent(eventId: number, userId: number) {
+export async function registerToEvent(eventId: string, userId: number) {
   return api.post(`/events/${eventId}/register`, {
     user_id: userId,
   })

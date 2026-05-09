@@ -12,7 +12,7 @@ import { registerSupportHandler } from './handlers/support.handler'
 
 export const bot = new Bot<BotContext>(env.BOT_TOKEN)
 
-bot.use(authMiddleware)
+authMiddleware(bot)
 
 registerStartHandler(bot)
 registerEventsHandler(bot)
