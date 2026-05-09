@@ -1,4 +1,5 @@
 import { unregisterFromEvent } from '../../../api/events.api'
+import { eventNavigationKeyboard } from '../../../keyboards/events.keyboard'
 import { BotContext } from '../../../types/context'
 
 export async function unregister(ctx: BotContext, data: string[]) {
@@ -12,6 +13,15 @@ export async function unregister(ctx: BotContext, data: string[]) {
 
   await unregisterFromEvent(eventId, ctx.user.telegram_id)
 
+  await ctx.editMessageReplyMarkup({
+    reply_markup: eventNavigationKeyboard(
+      eventId,
+      0, // page если нужно
+      1, // total
+      false,
+      '', // game
+    ),
+  })
   await ctx.answerCallbackQuery({
     text: '❌ Вы отписались',
   })

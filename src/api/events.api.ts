@@ -31,7 +31,7 @@ export async function getEvents(game?: string): Promise<Event[]> {
   return response.data.data
 }
 
-export async function registerToEvent(eventId: string, userId: number) {
+export async function registerToEvent(eventId: string, userId: string) {
   return api.post(`/bot/events/${eventId}/register`, {
     eventId: eventId,
     telegramUserId: userId,
@@ -45,4 +45,8 @@ export async function unregisterFromEvent(eventId: string, userId: string) {
       eventId: eventId,
     },
   })
+}
+
+export async function registrationCheckEvent(eventId: string, userId: string) {
+  return api.get(`/bot/events/${eventId}/registration`, { params: { telegramUserId: userId } })
 }

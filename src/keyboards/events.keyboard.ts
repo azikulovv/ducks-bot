@@ -14,18 +14,20 @@ export function eventNavigationKeyboard(
   page: number,
   total: number,
   registered: boolean,
-  game: string,
+  game?: string,
 ) {
   const keyboard = new InlineKeyboard()
 
   /**
    * navigation
    */
-  keyboard
-    .text('⬅️', `events:page:${page - 1}:${game}`)
-    .text(`${page + 1}/${total}`, 'noop')
-    .text('➡️', `events:page:${page + 1}:${game}`)
-    .row()
+  if (game) {
+    keyboard
+      .text('⬅️', `events:page:${page - 1}:${game}`)
+      .text(`${page + 1}/${total}`, 'noop')
+      .text('➡️', `events:page:${page + 1}:${game}`)
+      .row()
+  }
 
   /**
    * register button

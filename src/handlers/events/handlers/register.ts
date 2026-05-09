@@ -1,4 +1,5 @@
 import { registerToEvent } from '../../../api/events.api'
+import { eventNavigationKeyboard } from '../../../keyboards/events.keyboard'
 import { BotContext } from '../../../types/context'
 
 export async function register(ctx: BotContext, data: string[]) {
@@ -11,6 +12,16 @@ export async function register(ctx: BotContext, data: string[]) {
   const eventId = data[2]
 
   await registerToEvent(eventId, ctx.user.telegram_id)
+
+  await ctx.editMessageReplyMarkup({
+    reply_markup: eventNavigationKeyboard(
+      eventId,
+      0, // page если нужно
+      1, // total
+      true, // 👈 isRegistered = true
+      '', // game
+    ),
+  })
 
   await ctx.answerCallbackQuery({
     text: '✅ Вы записаны',

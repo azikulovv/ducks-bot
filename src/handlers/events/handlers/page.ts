@@ -1,9 +1,9 @@
-import { Context } from 'grammy'
-import { getEvents } from '../../../api/events.api'
+import { getEvents, registrationCheckEvent } from '../../../api/events.api'
 import { eventNavigationKeyboard } from '../../../keyboards/events.keyboard'
 import { formatEvent } from '../../../utils/formatters'
+import { BotContext } from '../../../types/context'
 
-export async function page(ctx: Context, data: string[]) {
+export async function page(ctx: BotContext, data: string[]) {
   const requestedPage = Number(data[2])
   const game = data[3]
 
