@@ -1,4 +1,4 @@
-import { Bot } from 'grammy'
+import { Bot, InputFile } from 'grammy'
 import { BotContext } from '../types/context'
 
 import { gamesKeyboard, eventNavigationKeyboard } from '../keyboards/events.keyboard'
@@ -7,10 +7,12 @@ import { getEvents, registerToEvent, unregisterFromEvent } from '../api/events.a
 
 import { parseCallback } from '../utils/callback'
 import { formatEvent } from '../utils/formatters'
+import path from 'node:path'
 
 export function registerEventsHandler(bot: Bot<BotContext>) {
   bot.command('events', async (ctx) => {
-    await ctx.reply('🎮 Выберите игру', {
+    await ctx.replyWithPhoto(new InputFile(path.join(process.cwd(), 'assets/logo.jpg')), {
+      caption: '🎮 Выберите игру',
       reply_markup: gamesKeyboard(),
     })
   })
@@ -32,6 +34,22 @@ export function registerEventsHandler(bot: Bot<BotContext>) {
       const action = data[1]
 
       /**
+       * BACK
+       *
+       * events:back
+       */
+      if (action === 'back') {
+        await ctx.deleteMessage()
+
+        await ctx.replyWithPhoto(new InputFile(path.join(process.cwd(), 'assets/logo.jpg')), {
+          caption: '🎮 Выберите игру',
+          reply_markup: gamesKeyboard(),
+        })
+
+        return ctx.answerCallbackQuery()
+      }
+
+      /**
        * FILTER EVENTS
        *
        * events:filter:poker
@@ -40,6 +58,7 @@ export function registerEventsHandler(bot: Bot<BotContext>) {
         const game = data[2]
 
         const events = await getEvents(game === 'all' ? undefined : game)
+        console.log('EVENTS:', events)
 
         if (!events.length) {
           return ctx.answerCallbackQuery({
@@ -51,7 +70,8 @@ export function registerEventsHandler(bot: Bot<BotContext>) {
 
         const event = events[page]
 
-        await ctx.editMessageText(formatEvent(event), {
+        await ctx.deleteMessage()
+        await ctx.reply(formatEvent(event), {
           reply_markup: eventNavigationKeyboard(event.id, page, events.length, false, game),
         })
 
@@ -100,7 +120,8 @@ export function registerEventsHandler(bot: Bot<BotContext>) {
 
         const event = events[normalizedPage]
 
-        await ctx.editMessageText(formatEvent(event), {
+        await ctx.deleteMessage()
+        await ctx.reply(formatEvent(event), {
           reply_markup: eventNavigationKeyboard(
             event.id,
             normalizedPage,

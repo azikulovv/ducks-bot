@@ -1,15 +1,12 @@
 import { InlineKeyboard } from 'grammy'
-import { createCallback } from '../utils/callback'
 
 export function gamesKeyboard() {
   return new InlineKeyboard()
-    .text('🎱 Бильярд', createCallback('events', 'filter', 'billiard'))
+    .text('🃏 Покер', 'events:filter:poker')
+    .text('🎯 Дартс', 'events:filter:darts')
     .row()
-    .text('♠️ Покер', createCallback('events', 'filter', 'poker'))
-    .row()
-    .text('🎯 Дартс', createCallback('events', 'filter', 'darts'))
-    .row()
-    .text('🎮 Все', createCallback('events', 'filter', 'all'))
+    .text('🎱 Бильярд', 'events:filter:billiards')
+    .text('🎮 Все', 'events:filter:all')
 }
 
 export function eventNavigationKeyboard(
@@ -22,43 +19,26 @@ export function eventNavigationKeyboard(
   const keyboard = new InlineKeyboard()
 
   /**
-   * Dynamic buttons
+   * navigation
    */
-  const isFirstPage = page === 0
-
-  const isLastPage = page === total - 1
+  keyboard
+    .text('⬅️', `events:page:${page - 1}:${game}`)
+    .text(`${page + 1}/${total}`, 'noop')
+    .text('➡️', `events:page:${page + 1}:${game}`)
+    .row()
 
   /**
-   * PREV
+   * register button
    */
   keyboard.text(
-    isFirstPage ? '⏺' : '◀️',
-    isFirstPage ? 'noop' : createCallback('events', 'page', String(page - 1), game),
+    registered ? '❌ Отписаться' : '✅ Записаться',
+    registered ? `events:unregister:${eventId}` : `events:register:${eventId}`,
   )
 
   /**
-   * PAGE INFO
+   * back button
    */
-  keyboard.text(`${page + 1}/${total}`, 'noop')
-
-  /**
-   * NEXT
-   */
-  keyboard.text(
-    isLastPage ? '⏺' : '▶️',
-    isLastPage ? 'noop' : createCallback('events', 'page', String(page + 1), game),
-  )
-
-  keyboard.row()
-
-  /**
-   * REGISTER BUTTON
-   */
-  if (registered) {
-    keyboard.text('❌ Отписаться', createCallback('events', 'unregister', String(eventId)))
-  } else {
-    keyboard.text('✅ Записаться', createCallback('events', 'register', String(eventId)))
-  }
+  keyboard.row().text('⬅️ Назад', 'events:back')
 
   return keyboard
 }

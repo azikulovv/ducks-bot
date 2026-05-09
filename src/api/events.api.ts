@@ -23,7 +23,8 @@ type GetEventsResponse = {
 export async function getEvents(game?: string): Promise<Event[]> {
   const response = await api.get<GetEventsResponse>('/events', {
     params: {
-      game,
+      gameType: game,
+      status: 'published',
     },
   })
 
