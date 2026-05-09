@@ -9,15 +9,17 @@ import { registerEventsHandler } from './handlers/events/events.handler'
 import { registerRatingsHandler } from './handlers/ratings.handler'
 import { registerRulesHandler } from './handlers/rules.handler'
 import { registerSupportHandler } from './handlers/support.handler'
+import { registerFeedbackHandler } from './handlers/feedback/feedback.handler'
 
 export const bot = new Bot<BotContext>(env.BOT_TOKEN)
 
 authMiddleware(bot)
 
 registerStartHandler(bot)
+registerRulesHandler(bot)
 registerEventsHandler(bot)
 registerRatingsHandler(bot)
-registerRulesHandler(bot)
+registerFeedbackHandler(bot)
 registerSupportHandler(bot)
 
 bot.catch((error) => {
