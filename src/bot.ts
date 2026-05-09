@@ -5,7 +5,7 @@ import { BotContext } from './types/context'
 import { authMiddleware } from './middlewares/auth.middleware'
 
 import { registerStartHandler } from './handlers/start.handler'
-import { registerEventsHandler } from './handlers/events.handler'
+import { registerEventsHandler } from './handlers/events/events.handler'
 import { registerRatingsHandler } from './handlers/ratings.handler'
 import { registerRulesHandler } from './handlers/rules.handler'
 import { registerSupportHandler } from './handlers/support.handler'
