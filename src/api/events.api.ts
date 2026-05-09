@@ -38,10 +38,11 @@ export async function registerToEvent(eventId: string, userId: number) {
   })
 }
 
-export async function unregisterFromEvent(eventId: number, userId: number) {
-  return api.delete(`/events/${eventId}/register`, {
+export async function unregisterFromEvent(eventId: string, userId: string) {
+  return api.delete(`/bot/events/${eventId}/register`, {
     data: {
-      user_id: userId,
+      telegramUserId: userId,
+      eventId: eventId,
     },
   })
 }

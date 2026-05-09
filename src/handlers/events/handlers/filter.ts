@@ -20,7 +20,7 @@ export async function filter(ctx: Context, data: string[]) {
   await ctx.deleteMessage()
 
   await ctx.reply(formatEvent(event), {
-    reply_markup: eventNavigationKeyboard(event.id, page, events.length, false, game),
+    reply_markup: eventNavigationKeyboard(event.id, page, events.length, true, game),
   })
 
   await ctx.answerCallbackQuery()

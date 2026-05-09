@@ -8,9 +8,9 @@ export async function unregister(ctx: BotContext, data: string[]) {
     })
   }
 
-  const eventId = Number(data[2])
+  const eventId = data[2]
 
-  await unregisterFromEvent(eventId, ctx.user.id)
+  await unregisterFromEvent(eventId, ctx.user.telegram_id)
 
   await ctx.answerCallbackQuery({
     text: '❌ Вы отписались',
