@@ -26,7 +26,7 @@ export async function filter(ctx: BotContext, data: string[]) {
       event.id,
       page,
       events.length,
-      registration.data.status !== 'cancelled',
+      registration.data?.status !== 'cancelled',
       game,
     ),
   })

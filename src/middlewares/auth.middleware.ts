@@ -1,6 +1,7 @@
 import { Bot } from 'grammy'
 import { BotContext } from '../types/context'
 import { getUserByTelegramId, createUser } from '../api/users.api'
+import { openAppKeyboard } from '../keyboards/common.keyboard'
 
 export function authMiddleware(bot: Bot<BotContext>) {
   bot.use(async (ctx, next) => {
@@ -10,18 +11,31 @@ export function authMiddleware(bot: Bot<BotContext>) {
       return next()
     }
 
-    let user = await getUserByTelegramId(telegramId)
+    const user = await getUserByTelegramId(telegramId)
 
     if (!user) {
-      user = await createUser({
-        telegram_id: telegramId.toString(),
-        name: ctx.from?.first_name || null,
-      })
+      await ctx.reply(
+        `
+🦆 Добро пожаловать в DUCK’S Club
+Доступные команды:
+
+/events
+/ratingpoker
+/ratingdart
+/ratingbill
+/rules
+/support
+      `,
+        {
+          reply_markup: openAppKeyboard(),
+        },
+      )
+
+      return
     }
 
     ctx.user = user
 
-    console.log(user)
     return next()
   })
 }
