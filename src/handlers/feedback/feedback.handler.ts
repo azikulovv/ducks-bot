@@ -34,8 +34,7 @@ export function registerFeedbackHandler(bot: Bot<BotContext>) {
 
       await ctx.reply('✅ Спасибо за ваш отзыв!')
     } catch (e) {
-      console.error(e)
-
+      // console.error(e)
       await ctx.reply('❌ Ошибка отправки. Попробуйте позже.')
     }
   })
