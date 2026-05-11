@@ -1,17 +1,13 @@
 import { api } from './client'
+import type { GetUserByTelegramIdParams, GetUserByTelegramIdResponse } from '../types/api/user'
 
-export async function getUserByTelegramId(telegramId: number) {
+export async function getUserByTelegramId(params: GetUserByTelegramIdParams) {
   try {
-    const response = await api.get(`/users/by-telegram-id/${telegramId}`)
-
+    const response = await api.get<GetUserByTelegramIdResponse>(
+      `/users/by-telegram-id/${params.telegramUserId}`,
+    )
     return response.data
   } catch {
     return null
   }
-}
-
-export async function createUser(data: { telegram_id: string; name?: string | null }) {
-  const res = await api.post(`/users`, data)
-
-  return res.data
 }
