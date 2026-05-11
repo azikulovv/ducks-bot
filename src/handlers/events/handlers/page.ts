@@ -1,13 +1,14 @@
-import { getEvents, registrationCheckEvent } from '../../../api/events.api'
-import { eventNavigationKeyboard } from '../../../keyboards/events.keyboard'
+import { getEvents } from '../../../api/events.api'
 import { formatEvent } from '../../../utils/formatters'
 import { BotContext } from '../../../types/context'
+import { eventNavigationKeyboard } from '../../../keyboards/events.keyboard'
+import { EventGameFilter } from '../../../types/api/event'
 
 export async function page(ctx: BotContext, data: string[]) {
   const requestedPage = Number(data[2])
-  const game = data[3]
+  const game = data[3] as EventGameFilter
 
-  const events = await getEvents(game === 'all' ? undefined : game)
+  const events = await getEvents({ gameType: game === EventGameFilter.all ? undefined : game })
 
   if (!events.length) {
     return ctx.answerCallbackQuery({

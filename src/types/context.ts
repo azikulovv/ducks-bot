@@ -1,10 +1,5 @@
-import { Context } from 'grammy'
-
-export interface TelegramUser {
-  id: number
-  email: string
-  telegram_id: string
-}
+import type { Context } from 'grammy'
+import type { TelegramUser } from './api/user'
 
 export interface BotContext extends Context {
   user?: TelegramUser | null

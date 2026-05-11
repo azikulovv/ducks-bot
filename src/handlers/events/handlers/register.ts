@@ -11,7 +11,7 @@ export async function register(ctx: BotContext, data: string[]) {
 
   const eventId = data[2]
 
-  await registerToEvent(eventId, ctx.user.telegram_id)
+  await registerToEvent({ eventId: eventId, telegramUserId: ctx.user.telegramId })
 
   await ctx.editMessageReplyMarkup({
     reply_markup: eventNavigationKeyboard(

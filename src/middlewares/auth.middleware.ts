@@ -3,6 +3,8 @@ import { BotContext } from '../types/context'
 import { getUserByTelegramId } from '../api/users.api'
 import { openAppKeyboard } from '../keyboards/common.keyboard'
 
+const PUBLIC_COMMANDS = new Set(['start', 'rules', 'support'])
+
 export function authMiddleware(bot: Bot<BotContext>) {
   bot.use(async (ctx, next) => {
     const telegramId = ctx.from?.id
@@ -11,10 +13,20 @@ export function authMiddleware(bot: Bot<BotContext>) {
       return next()
     }
 
-    const user = await getUserByTelegramId(telegramId)
+    if (ctx.message?.text?.startsWith('/')) {
+      const command = ctx.message.text.split(' ')[0].replace('/', '')
+
+      if (PUBLIC_COMMANDS.has(command)) {
+        return next()
+      }
+    }
+
+    const user = await getUserByTelegramId({
+      telegramUserId: telegramId,
+    })
 
     if (!user) {
-      await ctx.reply(`🦆 Сначало авторизуйтесь через мини приложение`, {
+      await ctx.reply('🦆 Сначала авторизуйтесь через мини приложение', {
         reply_markup: openAppKeyboard(),
       })
 

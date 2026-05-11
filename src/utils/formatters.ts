@@ -1,4 +1,4 @@
-import { Event } from '../api/events.api'
+import type { Event } from '../types/api/event'
 import { getGameLabel } from './labels'
 
 export function formatEvent(event: Event) {

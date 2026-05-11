@@ -11,7 +11,7 @@ export async function unregister(ctx: BotContext, data: string[]) {
 
   const eventId = data[2]
 
-  await unregisterFromEvent(eventId, ctx.user.telegram_id)
+  await unregisterFromEvent({ eventId, telegramUserId: ctx.user.telegramId })
 
   await ctx.editMessageReplyMarkup({
     reply_markup: eventNavigationKeyboard(

@@ -8,6 +8,13 @@ export const EventGameType = {
 
 export type EventGameType = (typeof EventGameType)[keyof typeof EventGameType]
 
+export const EventGameFilter = {
+  ...EventGameType,
+  all: 'all',
+} as const
+
+export type EventGameFilter = (typeof EventGameFilter)[keyof typeof EventGameFilter]
+
 export const EventGameStatus = {
   published: 'published',
   cancelled: 'cancelled',

@@ -26,7 +26,7 @@ export function registerFeedbackHandler(bot: Bot<BotContext>) {
       const message = ctx.message.text
 
       await sendFeedback({
-        telegramUserId: ctx.user.telegram_id,
+        telegramUserId: ctx.user.telegramId,
         message,
       })
 

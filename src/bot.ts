@@ -19,10 +19,10 @@ authMiddleware(bot)
 
 registerStartHandler(bot)
 registerRulesHandler(bot)
+registerSupportHandler(bot)
 registerEventsHandler(bot)
 registerRatingsHandler(bot)
 registerFeedbackHandler(bot)
-registerSupportHandler(bot)
 
 bot.catch((error) => {
   console.error('GLOBAL_BOT_ERROR:', error)
