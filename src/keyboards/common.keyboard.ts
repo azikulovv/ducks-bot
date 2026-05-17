@@ -1,6 +1,6 @@
 import { InlineKeyboard } from 'grammy'
-import { env } from '../config/env'
+import { buildMiniAppUrl } from '../utils/promo'
 
-export function openAppKeyboard() {
-  return new InlineKeyboard().webApp('🦆 Открыть DUCK’S App', env.MINI_APP_URL)
+export function openAppKeyboard(promoCode?: string) {
+  return new InlineKeyboard().webApp('🦆 Открыть DUCK’S App', buildMiniAppUrl(promoCode))
 }

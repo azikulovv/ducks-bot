@@ -3,4 +3,7 @@ import type { TelegramUser } from './api/user'
 
 export interface BotContext extends Context {
   user?: TelegramUser | null
+  session?: {
+    promoCode?: string
+  }
 }
