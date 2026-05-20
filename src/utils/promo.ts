@@ -23,7 +23,6 @@ export function buildMiniAppUrl(promoCode?: string): string {
 
   const url = new URL(env.MINI_APP_URL)
   url.searchParams.set('promo', promoCode)
-  url.searchParams.set('promoSource', 'telegram_bot')
 
   return url.toString()
 }

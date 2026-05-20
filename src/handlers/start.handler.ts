@@ -17,7 +17,7 @@ export function registerStartHandler(bot: Bot<BotContext>) {
     }
 
     if (ctx.from?.id && promoCode) {
-      await trackTelegramPromoStart({
+      void trackTelegramPromoStart({
         telegramUserId: ctx.from.id,
         promoCode,
       })
