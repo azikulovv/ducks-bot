@@ -24,6 +24,6 @@ registerEventsHandler(bot)
 registerRatingsHandler(bot)
 registerFeedbackHandler(bot)
 
-bot.catch((error) => {
+bot.start().catch((error) => {
   console.error('GLOBAL_BOT_ERROR:', error)
 })
