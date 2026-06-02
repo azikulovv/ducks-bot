@@ -19,5 +19,5 @@ export function registerRatingsHandler(bot: Bot<BotContext>) {
 
   bot.command('ratingdart', (ctx) => sendRating(ctx, 'darts', 'Рейтинг по дартсу'))
 
-  bot.command('ratingbill', (ctx) => sendRating(ctx, 'billiards', 'Рейтинг по бильярду'))
+  bot.command('ratingbill', (ctx) => sendRating(ctx, 'pool', 'Рейтинг по бильярду'))
 }

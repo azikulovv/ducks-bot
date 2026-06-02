@@ -2,7 +2,7 @@ export const getGameLabel = (type: string) => {
   return (
     {
       poker: '🃏 Покер',
-      billiards: '🎱 Бильярд',
+      pool: '🎱 Бильярд',
       darts: '🎯 Дартс',
     }[type] ?? type
   )

@@ -1,6 +1,6 @@
 export const GAMES = {
   poker: '♠️ Покер',
   darts: '🎯 Дартс',
-  billiard: '🎱 Бильярд',
+  pool: '🎱 Бильярд',
   all: '🎮 Все',
 }

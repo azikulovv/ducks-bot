@@ -1,5 +1,5 @@
 export const EventGameType = {
-  billiards: 'billiards',
+  pool: 'pool',
   mafia: 'mafia',
   quiz: 'quiz',
   poker: 'poker',

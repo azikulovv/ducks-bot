@@ -5,7 +5,7 @@ export function gamesKeyboard() {
     .text('🃏 Покер', 'events:filter:poker')
     .text('🎯 Дартс', 'events:filter:darts')
     .row()
-    .text('🎱 Бильярд', 'events:filter:billiards')
+    .text('🎱 Бильярд', 'events:filter:pool')
     .text('🎮 Все', 'events:filter:all')
 }
 
@@ -18,9 +18,6 @@ export function eventNavigationKeyboard(
 ) {
   const keyboard = new InlineKeyboard()
 
-  /**
-   * navigation
-   */
   if (game) {
     keyboard
       .text('⬅️', `events:page:${page - 1}:${game}`)
@@ -29,17 +26,11 @@ export function eventNavigationKeyboard(
       .row()
   }
 
-  /**
-   * register button
-   */
   keyboard.text(
     registered ? '❌ Отписаться' : '✅ Записаться',
     registered ? `events:unregister:${eventId}` : `events:register:${eventId}`,
   )
 
-  /**
-   * back button
-   */
   keyboard.row().text('⬅️ Назад', 'events:back')
 
   return keyboard
