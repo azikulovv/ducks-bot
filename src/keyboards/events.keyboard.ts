@@ -1,37 +1,23 @@
+import { env } from '../config/env'
 import { InlineKeyboard } from 'grammy'
+import { formatDate } from '../utils/formatters'
+import type { Event } from '../types/api/event'
 
-export function gamesKeyboard() {
-  return new InlineKeyboard()
-    .text('🃏 Покер', 'events:filter:poker')
-    .text('🎯 Дартс', 'events:filter:darts')
-    .row()
-    .text('🎱 Бильярд', 'events:filter:pool')
-    .text('🎮 Все', 'events:filter:all')
-}
-
-export function eventNavigationKeyboard(
-  eventId: string,
-  page: number,
-  total: number,
-  registered: boolean,
-  game?: string,
-) {
+export function eventsListKeyboard(events: Event[]) {
   const keyboard = new InlineKeyboard()
 
-  if (game) {
-    keyboard
-      .text('⬅️', `events:page:${page - 1}:${game}`)
-      .text(`${page + 1}/${total}`, 'noop')
-      .text('➡️', `events:page:${page + 1}:${game}`)
-      .row()
-  }
+  events.forEach((event) => {
+    const date = formatDate(event.startsAt, {
+      dateStyle: 'short',
+      timeStyle: 'short',
+    })
 
-  keyboard.text(
-    registered ? '❌ Отписаться' : '✅ Записаться',
-    registered ? `events:unregister:${eventId}` : `events:register:${eventId}`,
-  )
+    keyboard.webApp(`🃏 ${date} — ${event.title}`, `${env.MINI_APP_URL}/events/${event.id}`).row()
+  })
 
-  keyboard.row().text('⬅️ Назад', 'events:back')
+  keyboard
+    .url('📢 Канал DUCK’S', 'https://t.me/ducks_poker')
+    .webApp('🚀 Смотреть событии', env.MINI_APP_URL)
 
   return keyboard
 }

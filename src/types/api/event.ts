@@ -25,6 +25,7 @@ export type EventGameStatus = (typeof EventGameStatus)[keyof typeof EventGameSta
 
 export type Event = {
   id: string
+  title: string
   city: string
   endsAt: null
   status: EventGameStatus
