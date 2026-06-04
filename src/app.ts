@@ -1,37 +1,25 @@
-import express from 'express'
 import { bot } from './bot'
 import { env } from './config/env'
+import { createApp } from './server'
 import { startEventReminderJob } from './jobs/eventReminder.job'
-import { internalNotificationsRouter } from './routes/internal-notifications.route'
 
 async function bootstrap() {
-  const app = express()
-
-  app.use(express.json())
-
-  app.get('/health', (req, res) => {
-    res.json({
-      ok: true,
-      service: 'ducks-bot',
-    })
-  })
-
-  app.use('/internal/notifications', internalNotificationsRouter)
-
-  startEventReminderJob()
+  const app = createApp()
 
   app.listen(env.PORT, '0.0.0.0', () => {
-    console.log(`Internal API listening on port ${env.PORT}`)
+    console.log(`Внутренний API запущен на порту ${env.PORT}`)
   })
 
   await bot.start({
     onStart: (botInfo) => {
-      console.log(`🦆 DUCK’S bot started as @${botInfo.username}`)
+      console.log(`🦆 Бот DUCK’S запущен как @${botInfo.username}`)
     },
   })
+
+  startEventReminderJob()
 }
 
 bootstrap().catch((error) => {
-  console.error('BOOTSTRAP_ERROR:', error)
+  console.error('ОШИБКА_ЗАПУСКА:', error)
   process.exit(1)
 })
