@@ -1,7 +1,6 @@
 import { bot } from './bot'
 import { env } from './config/env'
 import { createApp } from './server'
-import { startEventReminderJob } from './jobs/eventReminder.job'
 
 async function bootstrap() {
   const app = createApp()
@@ -15,8 +14,6 @@ async function bootstrap() {
       console.log(`🦆 Бот DUCK’S запущен как @${botInfo.username}`)
     },
   })
-
-  startEventReminderJob()
 }
 
 bootstrap().catch((error) => {
