@@ -3,6 +3,7 @@ import { BotContext } from '../types/context'
 import { openAppKeyboard } from '../keyboards/common.keyboard'
 import { trackTelegramPromoStart } from '../api/promo-links.api'
 import { extractStartPayload, isValidPromoCode } from '../utils/promo'
+import { START_MESSAGE } from '../constants/messages'
 
 export function registerStartHandler(bot: Bot<BotContext>) {
   bot.command('start', async (ctx) => {
@@ -27,22 +28,8 @@ export function registerStartHandler(bot: Bot<BotContext>) {
       }
     }
 
-    await ctx.reply(
-      `
-🦆 Добро пожаловать в DUCK’S Club
-
-Доступные команды:
-
-/events
-/ratingpoker
-/ratingdart
-/ratingbill
-/rules
-/support
-`,
-      {
-        reply_markup: openAppKeyboard(promoCode),
-      },
-    )
+    await ctx.reply(START_MESSAGE, {
+      reply_markup: openAppKeyboard(promoCode),
+    })
   })
 }
