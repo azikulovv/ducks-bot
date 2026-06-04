@@ -1,4 +1,4 @@
-import z from 'zod'
+import { z } from 'zod'
 
 export const notificationDataSchema = z.object({
   telegramUserId: z.number().min(1),
