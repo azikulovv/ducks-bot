@@ -1,9 +1,9 @@
+import { GAMES } from '../constants/games'
 import type { Event } from '../types/api/event'
-import { getGameLabel } from './labels'
 
 export function formatEvent(event: Event) {
   return `
-${getGameLabel(event.gameType)}
+${GAMES[event.gameType]}
 
 📅 Дата и время: ${formatDate(event.startsAt, { dateStyle: 'short', timeStyle: 'short' })}
 📍 Локация: ${event.address}
